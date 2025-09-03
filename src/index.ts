@@ -15,12 +15,30 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
 		switch (url.pathname) {
+			case '/':
+				return new Response(`Worker cron test - Current time: ${new Date().toISOString()}`);
 			case '/message':
 				return new Response('Hello, World!');
 			case '/random':
 				return new Response(crypto.randomUUID());
 			default:
 				return new Response('Not Found', { status: 404 });
+		}
+	},
+
+	async scheduled(event, env, ctx): Promise<void> {
+		const workerUrl = `https://workers-playground.${env.CF_ZONE || 'yourdomain'}.workers.dev/`;
+		
+		try {
+			console.log('Cron triggered at:', new Date().toISOString());
+			
+			const response = await fetch(workerUrl);
+			const text = await response.text();
+			
+			console.log('Successfully accessed root path:', response.status);
+			console.log('Response:', text);
+		} catch (error) {
+			console.error('Failed to access root path:', error);
 		}
 	},
 } satisfies ExportedHandler<Env>;
