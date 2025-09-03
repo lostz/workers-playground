@@ -15,8 +15,6 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
 		switch (url.pathname) {
-			case '/':
-				return new Response(`Worker cron test - Current time: ${new Date().toISOString()}`);
 			case '/message':
 				return new Response('Hello, World!');
 			case '/random':
